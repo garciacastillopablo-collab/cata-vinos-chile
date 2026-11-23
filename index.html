@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Cata de Vinos Chile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #FFFFFF;
+      --bg-subtle: #F7F7F8;
+      --bg-muted: #ECECEF;
+      --border-light: #E4E4E7;
+      --border-strong: #D4D4D8;
+      --text-primary: #18181B;
+      --text-secondary: #52525B;
+      --text-muted: #71717A;
+      --accent: #18181B;
+      --accent-contrast: #FFFFFF;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+      padding-bottom: 84px;
+    }
+
+    .app-shell {
+      max-width: 540px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--bg-main);
+      border-left: 1px solid var(--border-light);
+      border-right: 1px solid var(--border-light);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-light);
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    header span {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .view {
+      display: none;
+      padding: 16px;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--bg-main);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .step-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .card-title {
+      margin: 0 0 14px 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    label.field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      background: var(--bg-main);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      background: var(--bg-subtle);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 78px;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 9px;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-main);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s;
+    }
+
+    .chip.selected {
+      background: var(--accent);
+      color: var(--accent-contrast);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .segmented {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 1fr;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .seg-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 6px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .seg-btn.selected {
+      background: var(--bg-main);
+      color: var(--text-primary);
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
+
+    /* Fase Visual: Muestras de Color */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .color-swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .swatch-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .color-swatch.selected .swatch-circle {
+      border: 2.5px solid var(--text-primary);
+      box-shadow: 0 0 0 3px var(--bg-muted);
+      transform: scale(1.06);
+    }
+
+    .swatch-check {
+      display: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .color-swatch.selected .swatch-check {
+      display: block;
+    }
+
+    .selected-color-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: center;
+      padding: 6px;
+      background: var(--bg-subtle);
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+    }
+
+    /* Foto / Cámara */
+    .photo-box {
+      border: 1.5px dashed var(--border-strong);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      background: var(--bg-subtle);
+    }
+
+    .photo-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .photo-preview {
+      max-width: 100%;
+      max-height: 210px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+      object-fit: cover;
+      border: 1px solid var(--border-light);
+    }
+
+    .conditional-box {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+    }
+
+    .conditional-box.visible {
+      display: block;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 11px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-main);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-contrast);
+      border-color: var(--accent);
+      width: 100%;
+    }
+
+    .btn-sm {
+      padding: 7px 11px;
+      font-size: 12px;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* Historial y Stats */
+    .tasting-item {
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: var(--bg-main);
+    }
+
+    .tasting-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .tasting-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin: 0;
+    }
+
+    .tasting-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .score-pill {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-strong);
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .mini-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-light);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .stat-box {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Navegación Inferior */
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 540px;
+      background: var(--bg-main);
+      border-top: 1px solid var(--border-light);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      z-index: 30;
+    }
+
+    .nav-btn {
+      border: none;
+      background: transparent;
+      padding: 10px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .nav-btn.active {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 76px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-primary);
+      color: var(--bg-main);
+      padding: 10px 16px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 50;
+    }
+
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <header>
+    <h1>Cata de Vinos Chile</h1>
+    <span id="headerCounter">0 catas</span>
+  </header>
+
+  <!-- VISTA 1: NUEVA CATA -->
+  <main id="view-form" class="view active">
+    <form id="tastingForm">
+      <input type="hidden" id="editId" value="" />
+
+      <!-- PASO 1: IDENTIFICACIÓN Y ORIGEN -->
+      <section class="card">
+        <span class="step-badge">Paso 1 · Identificación y Origen</span>
+        <h2 class="card-title">Etiqueta, Valle y Cepa</h2>
+
+        <div class="field">
+          <label class="field-label">Fotografía de la botella o copa</label>
+          <div class="photo-box">
+            <span style="font-size:12px;color:var(--text-muted);">Captura con cámara o sube desde galería</span>
+            <div class="photo-actions">
+              <label class="btn btn-sm">
+                Tomar Foto
+                <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden />
+              </label>
+              <label class="btn btn-sm">
+                Galería
+                <input type="file" id="galleryInput" accept="image/*" hidden />
+              </label>
+            </div>
+            <img id="photoPreview" class="photo-preview" alt="Vista previa del vino" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="region">Ciudad o Sector / Valle (Chile)</label>
+          <select id="region" required>
+            <option value="">Selecciona valle o sector...</option>
+            <optgroup label="Valles del Norte">
+              <option value="Valle de Copiapó">Valle de Copiapó</option>
+              <option value="Valle del Huasco">Valle del Huasco</option>
+              <option value="Valle del Elqui">Valle del Elqui</option>
+              <option value="Valle del Limarí">Valle del Limarí</option>
+              <option value="Valle del Choapa">Valle del Choapa</option>
+            </optgroup>
+            <optgroup label="Aconcagua y Costa">
+              <option value="Valle del Aconcagua">Valle del Aconcagua</option>
+              <option value="Valle de Casablanca">Valle de Casablanca</option>
+              <option value="Valle de San Antonio / Leyda">Valle de San Antonio / Leyda</option>
+            </optgroup>
+            <optgroup label="Valle Central">
+              <option value="Valle del Maipo">Valle del Maipo</option>
+              <option value="Valle del Cachapoal">Valle del Cachapoal</option>
+              <option value="Valle de Colchagua">Valle de Colchagua</option>
+              <option value="Apalta (Colchagua)">Apalta (Colchagua)</option>
+              <option value="Marchigüe (Colchagua)">Marchigüe (Colchagua)</option>
+              <option value="Valle de Curicó">Valle de Curicó</option>
+              <option value="Valle del Maule">Valle del Maule</option>
+            </optgroup>
+            <optgroup label="Valles del Sur y Austral">
+              <option value="Valle del Itata">Valle del Itata</option>
+              <option value="Valle del Bío-Bío">Valle del Bío-Bío</option>
+              <option value="Valle del Malleco">Valle del Malleco</option>
+              <option value="Valle de Osorno / Austral">Valle de Osorno / Austral</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="winery">Viña (se guarda automáticamente para futuras catas)</label>
+          <input type="text" id="winery" list="wineryList" placeholder="Escribe o elige una viña..." required />
+          <datalist id="wineryList"></datalist>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label class="field-label" for="grape">Cepa</label>
+            <select id="grape" required>
+              <option value="">Selecciona cepa...</option>
+              <option value="Cabernet Sauvignon">Cabernet Sauvignon</option>
+              <option value="Carménère">Carménère</option>
+              <option value="Merlot">Merlot</option>
+              <option value="Syrah">Syrah</option>
+              <option value="Pinot Noir">Pinot Noir</option>
+              <option value="País">País</option>
+              <option value="Cinsault">Cinsault</option>
+              <option value="Carignan">Carignan</option>
+              <option value="Malbec">Malbec</option>
+              <option value="Cabernet Franc">Cabernet Franc</option>
+              <option value="Petit Verdot">Petit Verdot</option>
+              <option value="Sauvignon Blanc">Sauvignon Blanc</option>
+              <option value="Chardonnay">Chardonnay</option>
+              <option value="Riesling">Riesling</option>
+              <option value="Gewürztraminer">Gewürztraminer</option>
+              <option value="Viognier">Viognier</option>
+              <option value="Semillón">Semillón</option>
+              <option value="Moscatel de Alejandría">Moscatel de Alejandría</option>
+              <option value="Blend (Mezcla)">Blend (Mezcla)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="vintage">Año / Cosecha</label>
+            <input type="text" id="vintage" placeholder="Ej: 2021 o NV" required />
+          </div>
+        </div>
+
+        <div id="blendBox" class="conditional-box">
+          <label class="field-label" for="blendDetails">Variedades del Blend (Mezcla)</label>
+          <input type="text" id="blendDetails" placeholder="Ej: 60% Cabernet Sauvignon, 30% Carménère, 10% Syrah" />
+        </div>
+      </section>
+
+      <!-- PASO 2: FASE VISUAL -->
+      <section class="card">
+        <span class="step-badge">Paso 2 · Fase Visual</span>
+        <h2 class="card-title">Color del Vino</h2>
+        <div class="color-grid" id="colorGrid"></div>
+        <div class="selected-color-label" id="selectedColorLabel">Selecciona un tono</div>
+      </section>
+
+      <!-- PASO 3: CRIANZA Y GUARDA -->
+      <section class="card">
+        <span class="step-badge">Paso 3 · Crianza y Guarda</span>
+        <h2 class="card-title">Madera, Acero y Recipientes</h2>
+
+        <div class="field">
+          <label class="field-label">¿Tiene Madera?</label>
+          <div class="segmented" id="hasWoodSeg">
+            <button type="button" class="seg-btn selected" data-val="No">No</button>
+            <button type="button" class="seg-btn" data-val="Sí">Sí</button>
+          </div>
+        </div>
+
+        <div id="woodDetailsBox" class="conditional-box">
+          <div class="field">
+            <label class="field-label" for="woodType">Tipo de Madera</label>
+            <select id="woodType">
+              <option value="Roble Francés">Roble Francés</option>
+              <option value="Roble Americano">Roble Americano</option>
+              <option value="Roble Húngaro / Europeo">Roble Húngaro / Europeo</option>
+              <option value="Raulí (Madera Nativa Chile)">Raulí (Madera Nativa Chile)</option>
+              <option value="Acacia">Acacia</option>
+              <option value="Castaño">Castaño</option>
+              <option value="Mixto (Francés / Americano)">Mixto (Francés / Americano)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Uso de Madera</label>
+            <div class="segmented" id="woodUseSeg">
+              <button type="button" class="seg-btn selected" data-val="1er uso">1</button>
+              <button type="button" class="seg-btn" data-val="2do uso">2</button>
+              <button type="button" class="seg-btn" data-val="3er uso">3</button>
+              <button type="button" class="seg-btn" data-val="4 o más usos">4 o más</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:14px;">
+          <label class="field-label">Acero Inoxidable</label>
+          <div class="segmented" id="hasSteelSeg">
+            <button type="button" class="seg-btn selected" data-val="No">No</button>
+            <button type="button" class="seg-btn" data-val="Sí">Sí</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Otro tipo de guarda (selección múltiple)</label>
+          <div class="chip-group" id="otherAgingChips">
+            <div class="chip" data-val="Cuero">Cuero</div>
+            <div class="chip" data-val="Concreto / Huevo">Concreto / Huevo</div>
+            <div class="chip" data-val="Vasija de greda / Tinaja">Vasija de greda / Tinaja</div>
+            <div class="chip" data-val="Ánfora de terracota">Ánfora de terracota</div>
+            <div class="chip" data-val="Fudre">Fudre</div>
+            <div class="chip" data-val="Ninguno">Ninguno</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PASO 4: FASE OLFATIVA -->
+      <section class="card">
+        <span class="step-badge">Paso 4 · Fase Olfativa</span>
+        <h2 class="card-title">Características de Aroma</h2>
+
+        <div class="field">
+          <label class="field-label">Intensidad Aromática</label>
+          <div class="segmented" id="aromaIntensitySeg">
+            <button type="button" class="seg-btn" data-val="Baja">Baja</button>
+            <button type="button" class="seg-btn selected" data-val="Media">Media</button>
+            <button type="button" class="seg-btn" data-val="Pronunciada">Pronunciada</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Familias y Descriptores Aromáticos</label>
+          <div class="chip-group" id="aromaChips">
+            <div class="chip" data-val="Fruta Roja">Fruta Roja</div>
+            <div class="chip" data-val="Fruta Negra">Fruta Negra</div>
+            <div class="chip" data-val="Cítricos">Cítricos</div>
+            <div class="chip" data-val="Fruta Blanca / Tropical">Fruta Blanca / Tropical</div>
+            <div class="chip" data-val="Herbal / Pirazinas">Herbal / Pirazinas</div>
+            <div class="chip" data-val="Especias">Especias</div>
+            <div class="chip" data-val="Tostados / Vainilla">Tostados / Vainilla</div>
+            <div class="chip" data-val="Floral">Floral</div>
+            <div class="chip" data-val="Mineral / Salino">Mineral / Salino</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="aromaNotes">Notas de Aroma detalladas</label>
+          <input type="text" id="aromaNotes" placeholder="Ej: Guinda ácida, pimiento asado, pimienta negra, cedro..." />
+        </div>
+      </section>
+
+      <!-- PASO 5: FASE GUSTATIVA -->
+      <section class="card">
+        <span class="step-badge">Paso 5 · Fase Gustativa</span>
+        <h2 class="card-title">Estructura y Sabores en Boca</h2>
+
+        <div class="field">
+          <label class="field-label">Dulzor / Sequedad</label>
+          <div class="segmented" id="sweetnessSeg">
+            <button type="button" class="seg-btn selected" data-val="Seco">Seco</button>
+            <button type="button" class="seg-btn" data-val="Ligeramente Seco">Ligeramente Seco</button>
+            <button type="button" class="seg-btn" data-val="Semi-Dulce">Semi-Dulce</button>
+            <button type="button" class="seg-btn" data-val="Dulce">Dulce</button>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label class="field-label">Nivel de Acidez</label>
+            <div class="segmented" id="aciditySeg">
+              <button type="button" class="seg-btn" data-val="Bajo">Bajo</button>
+              <button type="button" class="seg-btn selected" data-val="Medio">Medio</button>
+              <button type="button" class="seg-btn" data-val="Alto">Alto</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Potencia / Cuerpo</label>
+            <div class="segmented" id="bodySeg">
+              <button type="button" class="seg-btn" data-val="Ligero">Ligero</button>
+              <button type="button" class="seg-btn selected" data-val="Medio">Medio</button>
+              <button type="button" class="seg-btn" data-val="Potente">Potente</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label class="field-label">Taninos</label>
+            <div class="segmented" id="tanninsSeg">
+              <button type="button" class="seg-btn" data-val="Bajo">Bajo</button>
+              <button type="button" class="seg-btn selected" data-val="Medio">Medio</button>
+              <button type="button" class="seg-btn" data-val="Alto">Alto</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">Alcohol percibido</label>
+            <div class="segmented" id="alcoholSeg">
+              <button type="button" class="seg-btn" data-val="Bajo">Bajo</button>
+              <button type="button" class="seg-btn selected" data-val="Medio">Medio</button>
+              <button type="button" class="seg-btn" data-val="Alto">Alto</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Perfil de Sabores en Boca</label>
+          <div class="chip-group" id="palateChips">
+            <div class="chip" data-val="Frutas Rojas">Frutas Rojas</div>
+            <div class="chip" data-val="Frutas Negras">Frutas Negras</div>
+            <div class="chip" data-val="Frutas Verdes">Frutas Verdes</div>
+            <div class="chip" data-val="Cítricos">Cítricos</div>
+            <div class="chip" data-val="Cuero">Cuero</div>
+            <div class="chip" data-val="Chocolate / Cacao">Chocolate / Cacao</div>
+            <div class="chip" data-val="Tabaco">Tabaco</div>
+            <div class="chip" data-val="Especias">Especias</div>
+            <div class="chip" data-val="Vainilla / Tostado">Vainilla / Tostado</div>
+            <div class="chip" data-val="Mineral / Salino">Mineral / Salino</div>
+            <div class="chip" data-val="Herbal">Herbal</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="palateNotes">Notas de Sabor detalladas</label>
+          <input type="text" id="palateNotes" placeholder="Ej: Entrada jugosa, tanino sedoso, notas de cuero y ciruela..." />
+        </div>
+      </section>
+
+      <!-- PASO 6: PERSISTENCIA, SERVICIO Y NOTA DE CATA -->
+      <section class="card">
+        <span class="step-badge">Paso 6 · Cierre y Nota de Cata</span>
+        <h2 class="card-title">Persistencia, Temperatura y Evaluación</h2>
+
+        <div class="field">
+          <label class="field-label">Persistencia en Boca (Final)</label>
+          <div class="segmented" id="persistenceSeg">
+            <button type="button" class="seg-btn" data-val="Corta">Corta</button>
+            <button type="button" class="seg-btn selected" data-val="Media">Media</button>
+            <button type="button" class="seg-btn" data-val="Larga">Larga</button>
+            <button type="button" class="seg-btn" data-val="Muy Larga">Muy Larga</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Temperatura Recomendada</label>
+          <div class="chip-group" id="tempChips">
+            <div class="chip" data-val="6° - 8°C">6° - 8°C</div>
+            <div class="chip" data-val="8° - 10°C">8° - 10°C</div>
+            <div class="chip" data-val="10° - 12°C">10° - 12°C</div>
+            <div class="chip" data-val="12° - 14°C">12° - 14°C</div>
+            <div class="chip" data-val="14° - 16°C">14° - 16°C</div>
+            <div class="chip selected" data-val="16° - 18°C">16° - 18°C</div>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label class="field-label" for="agingPotential">Potencial de Guarda</label>
+            <select id="agingPotential">
+              <option value="Beber ahora">Beber ahora</option>
+              <option value="2 - 4 años">2 - 4 años</option>
+              <option value="5 - 8 años" selected>5 - 8 años</option>
+              <option value="10+ años">10+ años</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="score">Puntaje (80 - 100 pts)</label>
+            <input type="number" id="score" min="80" max="100" value="90" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="pairing">Maridaje Sugerido</label>
+          <input type="text" id="pairing" placeholder="Ej: Plateada al horno, pastel de choclo, quesos maduros..." />
+        </div>
+
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label class="field-label" for="tastingNote" style="margin:0;">Nota de Cata Completa</label>
+            <button type="button" class="btn btn-sm" id="autoNoteBtn">Autogenerar borrador</button>
+          </div>
+          <textarea id="tastingNote" placeholder="Escribe tus impresiones generales o pulsa 'Autogenerar borrador'..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="saveBtn">Guardar Cata</button>
+      </section>
+    </form>
+  </main>
+
+  <!-- VISTA 2: MIS CATAS -->
+  <section id="view-history" class="view">
+    <div class="card">
+      <input type="text" id="searchInput" placeholder="Buscar por viña, cepa, valle o nota..." />
+    </div>
+    <div id="historyList"></div>
+  </section>
+
+  <!-- VISTA 3: VIÑAS & STATS -->
+  <section id="view-stats" class="view">
+    <div class="stat-grid" id="statsGrid"></div>
+    <div class="card">
+      <h2 class="card-title">Viñas Guardadas (Base de Datos)</h2>
+      <div class="row-2" style="margin-bottom:10px;">
+        <input type="text" id="newWineryInput" placeholder="Agregar nueva viña..." />
+        <button type="button" class="btn" id="addWineryBtn">Agregar</button>
+      </div>
+      <div class="chip-group" id="wineryBadges"></div>
+    </div>
+  </section>
+
+  <!-- VISTA 4: RESPALDO / APK -->
+  <section id="view-backup" class="view">
+    <div class="card">
+      <h2 class="card-title">Exportar e Importar Catas</h2>
+      <p style="font-size:13px;color:var(--text-secondary);margin-top:0;">
+        Tus catas y viñas se guardan localmente en tu dispositivo. Exporta respaldos periódicos.
+      </p>
+      <div class="row-2">
+        <button type="button" class="btn" id="exportCsvBtn">Exportar CSV</button>
+        <button type="button" class="btn" id="exportJsonBtn">Exportar JSON</button>
+      </div>
+      <div style="margin-top:10px;">
+        <label class="btn" style="width:100%;">
+          Importar respaldo JSON
+          <input type="file" id="importJsonInput" accept=".json" hidden />
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-target="view-form">Nueva Cata</button>
+    <button class="nav-btn" data-target="view-history">Mis Catas</button>
+    <button class="nav-btn" data-target="view-stats">Viñas & Stats</button>
+    <button class="nav-btn" data-target="view-backup">Respaldo</button>
+  </nav>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  const COLORS = [
+    { name: 'Amarillo Verdoso / Pálido', hex: '#E9F0C9', darkText: true },
+    { name: 'Amarillo Pajizo', hex: '#F3E59A', darkText: true },
+    { name: 'Amarillo Dorado', hex: '#DFB654', darkText: true },
+    { name: 'Ámbar / Ocre', hex: '#C67D2E', darkText: false },
+    { name: 'Naranjo / Piel de Cebolla', hex: '#E29578', darkText: true },
+    { name: 'Rosado Pálido / Salmón', hex: '#F4C2C2', darkText: true },
+    { name: 'Rosado Intenso / Frambuesa', hex: '#D9536F', darkText: false },
+    { name: 'Rojo Violáceo / Púrpura', hex: '#4A153B', darkText: false },
+    { name: 'Rojo Rubí', hex: '#8B1E2F', darkText: false },
+    { name: 'Rojo Granate / Teja', hex: '#6E261E', darkText: false }
+  ];
+
+  const DEFAULT_WINERIES = [
+    'Concha y Toro', 'Santa Rita', 'Montes', 'Errázuriz', 'Lapostolle',
+    'Clos Apalta', 'Viu Manent', 'Casa Silva', 'Emiliana', 'Undurraga',
+    'San Pedro', 'Tarapacá', 'Cousiño Macul', 'De Martino', 'Bouchon'
+  ];
+
+  let tastings = JSON.parse(localStorage.getItem('wine_tastings_cl') || '[]');
+  let wineries = JSON.parse(localStorage.getItem('wine_wineries_cl') || JSON.stringify(DEFAULT_WINERIES));
+  let selectedColor = COLORS[8].name;
+  let currentPhotoData = '';
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  function renderColors() {
+    const grid = document.getElementById('colorGrid');
+    grid.innerHTML = '';
+    COLORS.forEach(c => {
+      const item = document.createElement('div');
+      item.className = 'color-swatch' + (c.name === selectedColor ? ' selected' : '');
+      item.innerHTML = `
+        <div class="swatch-circle" style="background:${c.hex};color:${c.darkText ? '#18181B' : '#FFFFFF'}">
+          <span class="swatch-check">✓</span>
+        </div>
+      `;
+      item.onclick = () => {
+        selectedColor = c.name;
+        renderColors();
+      };
+      grid.appendChild(item);
+    });
+    document.getElementById('selectedColorLabel').textContent = selectedColor;
+  }
+
+  function renderWineries() {
+    wineries = [...new Set(wineries)].sort((a, b) => a.localeCompare(b));
+    localStorage.setItem('wine_wineries_cl', JSON.stringify(wineries));
+    const dl = document.getElementById('wineryList');
+    dl.innerHTML = wineries.map(w => `<option value="${w}">`).join('');
+
+    const badges = document.getElementById('wineryBadges');
+    badges.innerHTML = wineries.map(w => `
+      <div class="chip" style="display:inline-flex;align-items:center;gap:6px;">
+        <span>${w}</span>
+        <span onclick="removeWinery('${w.replace(/'/g, "\\'")}')" style="opacity:0.6;font-weight:700;">×</span>
+      </div>
+    `).join('');
+  }
+
+  window.removeWinery = function(name) {
+    wineries = wineries.filter(w => w !== name);
+    renderWineries();
+    showToast('Viña eliminada');
+  };
+
+  function setupSegmented(id, onChange) {
+    const container = document.getElementById(id);
+    container.querySelectorAll('.seg-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        if (onChange) onChange(btn.dataset.val);
+      });
+    });
+  }
+
+  function getSegVal(id) {
+    const sel = document.querySelector(`#${id} .seg-btn.selected`);
+    return sel ? sel.dataset.val : '';
+  }
+
+  function setSegVal(id, val) {
+    document.querySelectorAll(`#${id} .seg-btn`).forEach(b => {
+      b.classList.toggle('selected', b.dataset.val === val);
+    });
+  }
+
+  function setupChips(id, single = false) {
+    const container = document.getElementById(id);
+    container.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (single) {
+          container.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+        } else {
+          chip.classList.toggle('selected');
+        }
+      });
+    });
+  }
+
+  function getChipVals(id) {
+    return [...document.querySelectorAll(`#${id} .chip.selected`)].map(c => c.dataset.val);
+  }
+
+  function setChipVals(id, vals = []) {
+    document.querySelectorAll(`#${id} .chip`).forEach(c => {
+      c.classList.toggle('selected', vals.includes(c.dataset.val));
+    });
+  }
+
+  // Condicionales
+  document.getElementById('grape').addEventListener('change', e => {
+    document.getElementById('blendBox').classList.toggle('visible', e.target.value === 'Blend (Mezcla)');
+  });
+
+  setupSegmented('hasWoodSeg', val => {
+    document.getElementById('woodDetailsBox').classList.toggle('visible', val === 'Sí');
+  });
+  setupSegmented('woodUseSeg');
+  setupSegmented('hasSteelSeg');
+  setupSegmented('aromaIntensitySeg');
+  setupSegmented('sweetnessSeg');
+  setupSegmented('aciditySeg');
+  setupSegmented('bodySeg');
+  setupSegmented('tanninsSeg');
+  setupSegmented('alcoholSeg');
+  setupSegmented('persistenceSeg');
+
+  setupChips('otherAgingChips', false);
+  setupChips('aromaChips', false);
+  setupChips('palateChips', false);
+  setupChips('tempChips', true);
+
+  // Manejo de imágenes (compresión ligera para localStorage)
+  function handleImageFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxW = 700;
+        const scale = Math.min(1, maxW / img.width);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        currentPhotoData = canvas.toDataURL('image/jpeg', 0.72);
+        const prev = document.getElementById('photoPreview');
+        prev.src = currentPhotoData;
+        prev.style.display = 'block';
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  document.getElementById('cameraInput').addEventListener('change', e => handleImageFile(e.target.files[0]));
+  document.getElementById('galleryInput').addEventListener('change', e => handleImageFile(e.target.files[0]));
+
+  // Autogenerador de Nota de Cata
+  document.getElementById('autoNoteBtn').addEventListener('click', () => {
+    const winery = document.getElementById('winery').value || 'Vino';
+    const grape = document.getElementById('grape').value || '';
+    const vintage = document.getElementById('vintage').value || '';
+    const region = document.getElementById('region').value || 'Chile';
+    const aromas = getChipVals('aromaChips').join(', ').toLowerCase();
+    const palate = getChipVals('palateChips').join(', ').toLowerCase();
+    const acidity = getSegVal('aciditySeg').toLowerCase();
+    const body = getSegVal('bodySeg').toLowerCase();
+    const persistence = getSegVal('persistenceSeg').toLowerCase();
+    const hasWood = getSegVal('hasWoodSeg');
+    const woodInfo = hasWood === 'Sí'
+      ? ` Con crianza en ${document.getElementById('woodType').value.toLowerCase()} (${getSegVal('woodUseSeg')}).`
+      : '';
+
+    const note = `${winery} ${grape} ${vintage} (${region}). A la vista presenta un tono ${selectedColor.toLowerCase()}. En nariz muestra intensidad ${getSegVal('aromaIntensitySeg').toLowerCase()}${aromas ? ' con notas de ' + aromas : ''}. En boca es ${getSegVal('sweetnessSeg').toLowerCase()}, de cuerpo ${body}, acidez ${acidity}${palate ? ' y sabores a ' + palate : ''}.${woodInfo} Final de persistencia ${persistence}.`;
+    document.getElementById('tastingNote').value = note;
+    showToast('Borrador generado');
+  });
+
+  // Guardar Cata
+  document.getElementById('tastingForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const wineryName = document.getElementById('winery').value.trim();
+    if (wineryName && !wineries.some(w => w.toLowerCase() === wineryName.toLowerCase())) {
+      wineries.push(wineryName);
+      renderWineries();
+    }
+
+    const editId = document.getElementById('editId').value;
+    const record = {
+      id: editId || Date.now().toString(),
+      date: new Date().toLocaleDateString('es-CL'),
+      region: document.getElementById('region').value,
+      winery: wineryName,
+      grape: document.getElementById('grape').value,
+      blendDetails: document.getElementById('blendDetails').value.trim(),
+      vintage: document.getElementById('vintage').value.trim(),
+      color: selectedColor,
+      hasWood: getSegVal('hasWoodSeg'),
+      woodType: getSegVal('hasWoodSeg') === 'Sí' ? document.getElementById('woodType').value : '',
+      woodUse: getSegVal('hasWoodSeg') === 'Sí' ? getSegVal('woodUseSeg') : '',
+      hasSteel: getSegVal('hasSteelSeg'),
+      otherAging: getChipVals('otherAgingChips'),
+      aromaIntensity: getSegVal('aromaIntensitySeg'),
+      aromas: getChipVals('aromaChips'),
+      aromaNotes: document.getElementById('aromaNotes').value.trim(),
+      sweetness: getSegVal('sweetnessSeg'),
+      acidity: getSegVal('aciditySeg'),
+      body: getSegVal('bodySeg'),
+      tannins: getSegVal('tanninsSeg'),
+      alcohol: getSegVal('alcoholSeg'),
+      palate: getChipVals('palateChips'),
+      palateNotes: document.getElementById('palateNotes').value.trim(),
+      persistence: getSegVal('persistenceSeg'),
+      temp: getChipVals('tempChips')[0] || '16° - 18°C',
+      agingPotential: document.getElementById('agingPotential').value,
+      score: document.getElementById('score').value,
+      pairing: document.getElementById('pairing').value.trim(),
+      tastingNote: document.getElementById('tastingNote').value.trim(),
+      photo: currentPhotoData
+    };
+
+    if (editId) {
+      tastings = tastings.map(t => t.id === editId ? record : t);
+      document.getElementById('editId').value = '';
+      document.getElementById('saveBtn').textContent = 'Guardar Cata';
+    } else {
+      tastings.unshift(record);
+    }
+
+    localStorage.setItem('wine_tastings_cl', JSON.stringify(tastings));
+    e.target.reset();
+    currentPhotoData = '';
+    document.getElementById('photoPreview').style.display = 'none';
+    document.getElementById('blendBox').classList.remove('visible');
+    document.getElementById('woodDetailsBox').classList.remove('visible');
+    setChipVals('otherAgingChips', []);
+    setChipVals('aromaChips', []);
+    setChipVals('palateChips', []);
+    setChipVals('tempChips', ['16° - 18°C']);
+    updateAllViews();
+    showToast('Cata guardada correctamente');
+  });
+
+  function renderHistory(filter = '') {
+    const list = document.getElementById('historyList');
+    const q = filter.toLowerCase();
+    const filtered = tastings.filter(t =>
+      [t.winery, t.grape, t.region, t.vintage, t.tastingNote].join(' ').toLowerCase().includes(q)
+    );
+
+    if (!filtered.length) {
+      list.innerHTML = '<div class="card" style="text-align:center;color:var(--text-muted);font-size:13px;">No hay catas registradas aún.</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(t => `
+      <div class="tasting-item">
+        <div class="tasting-header">
+          <div>
+            <h3 class="tasting-title">${t.winery} · ${t.grape} (${t.vintage})</h3>
+            <div class="tasting-meta">${t.region} · ${t.date}</div>
+          </div>
+          <span class="score-pill">${t.score} pts</span>
+        </div>
+        ${t.photo ? `<img src="${t.photo}" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-top:10px;" />` : ''}
+        <div class="tag-row">
+          <span class="mini-tag">${t.color}</span>
+          <span class="mini-tag">Acidez: ${t.acidity}</span>
+          <span class="mini-tag">Cuerpo: ${t.body}</span>
+          <span class="mini-tag">Final: ${t.persistence}</span>
+          <span class="mini-tag">${t.temp}</span>
+          ${t.hasWood === 'Sí' ? `<span class="mini-tag">${t.woodType} (${t.woodUse})</span>` : ''}
+        </div>
+        ${t.tastingNote ? `<p style="font-size:13px;color:var(--text-secondary);margin:10px 0 0 0;line-height:1.45;">${t.tastingNote}</p>` : ''}
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="btn btn-sm" onclick="editTasting('${t.id}')">Editar</button>
+          <button class="btn btn-sm" onclick="deleteTasting('${t.id}')">Eliminar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.editTasting = function(id) {
+    const t = tastings.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('editId').value = t.id;
+    document.getElementById('region').value = t.region;
+    document.getElementById('winery').value = t.winery;
+    document.getElementById('grape').value = t.grape;
+    document.getElementById('blendDetails').value = t.blendDetails || '';
+    document.getElementById('blendBox').classList.toggle('visible', t.grape === 'Blend (Mezcla)');
+    document.getElementById('vintage').value = t.vintage;
+    selectedColor = t.color;
+    renderColors();
+    setSegVal('hasWoodSeg', t.hasWood);
+    document.getElementById('woodDetailsBox').classList.toggle('visible', t.hasWood === 'Sí');
+    if (t.woodType) document.getElementById('woodType').value = t.woodType;
+    if (t.woodUse) setSegVal('woodUseSeg', t.woodUse);
+    setSegVal('hasSteelSeg', t.hasSteel);
+    setChipVals('otherAgingChips', t.otherAging || []);
+    setSegVal('aromaIntensitySeg', t.aromaIntensity);
+    setChipVals('aromaChips', t.aromas || []);
+    document.getElementById('aromaNotes').value = t.aromaNotes || '';
+    setSegVal('sweetnessSeg', t.sweetness);
+    setSegVal('aciditySeg', t.acidity);
+    setSegVal('bodySeg', t.body);
+    setSegVal('tanninsSeg', t.tannins);
+    setSegVal('alcoholSeg', t.alcohol);
+    setChipVals('palateChips', t.palate || []);
+    document.getElementById('palateNotes').value = t.palateNotes || '';
+    setSegVal('persistenceSeg', t.persistence);
+    setChipVals('tempChips', [t.temp]);
+    document.getElementById('agingPotential').value = t.agingPotential;
+    document.getElementById('score').value = t.score;
+    document.getElementById('pairing').value = t.pairing || '';
+    document.getElementById('tastingNote').value = t.tastingNote || '';
+    currentPhotoData = t.photo || '';
+    const prev = document.getElementById('photoPreview');
+    if (currentPhotoData) { prev.src = currentPhotoData; prev.style.display = 'block'; }
+    document.getElementById('saveBtn').textContent = 'Actualizar Cata';
+    switchView('view-form');
+  };
+
+  window.deleteTasting = function(id) {
+    tastings = tastings.filter(t => t.id !== id);
+    localStorage.setItem('wine_tastings_cl', JSON.stringify(tastings));
+    updateAllViews();
+    showToast('Cata eliminada');
+  };
+
+  function renderStats() {
+    const avg = tastings.length
+      ? (tastings.reduce((acc, t) => acc + Number(t.score || 0), 0) / tastings.length).toFixed(1)
+      : '0';
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="stat-box"><div class="stat-num">${tastings.length}</div><div class="stat-lbl">Catas</div></div>
+      <div class="stat-box"><div class="stat-num">${wineries.length}</div><div class="stat-lbl">Viñas</div></div>
+      <div class="stat-box"><div class="stat-num">${avg}</div><div class="stat-lbl">Promedio Pts</div></div>
+    `;
+  }
+
+  function updateAllViews() {
+    document.getElementById('headerCounter').textContent = `${tastings.length} catas`;
+    renderHistory(document.getElementById('searchInput').value);
+    renderStats();
+  }
+
+  function switchView(targetId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(targetId).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.target === targetId));
+  }
+
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchView(btn.dataset.target));
+  });
+
+  document.getElementById('searchInput').addEventListener('input', e => renderHistory(e.target.value));
+
+  document.getElementById('addWineryBtn').addEventListener('click', () => {
+    const val = document.getElementById('newWineryInput').value.trim();
+    if (!val) return;
+    wineries.push(val);
+    document.getElementById('newWineryInput').value = '';
+    renderWineries();
+    showToast('Viña agregada');
+  });
+
+  // Exportar JSON / CSV
+  document.getElementById('exportJsonBtn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify({ tastings, wineries }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `cata_vinos_chile_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+  });
+
+  document.getElementById('exportCsvBtn').addEventListener('click', () => {
+    const headers = ['Fecha','Valle','Viña','Cepa','Blend','Año','Color','Madera','TipoMadera','UsoMadera','Acero','OtroGuarda','Aromas','Dulzor','Acidez','Potencia','Sabores','Persistencia','Temperatura','Puntaje','Nota'];
+    const rows = tastings.map(t => [
+      t.date, t.region, t.winery, t.grape, t.blendDetails, t.vintage, t.color,
+      t.hasWood, t.woodType, t.woodUse, t.hasSteel, (t.otherAging||[]).join('; '),
+      (t.aromas||[]).join('; '), t.sweetness, t.acidity, t.body, (t.palate||[]).join('; '),
+      t.persistence, t.temp, t.score, (t.tastingNote||'').replace(/"/g, '""')
+    ].map(v => `"${v || ''}"`).join(','));
+    const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `cata_vinos_chile_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+  });
+
+  document.getElementById('importJsonInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (Array.isArray(data.tastings)) tastings = data.tastings;
+        if (Array.isArray(data.wineries)) wineries = data.wineries;
+        localStorage.setItem('wine_tastings_cl', JSON.stringify(tastings));
+        renderWineries();
+        updateAllViews();
+        showToast('Respaldo importado');
+      } catch {
+        showToast('Archivo JSON inválido');
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  renderColors();
+  renderWineries();
+  updateAllViews();
+</script>
+</body>
+</html>
